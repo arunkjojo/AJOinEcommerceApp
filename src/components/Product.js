@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View, Dimensions } from 'react-native'
 import { Button } from '@react-native-material/core'
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,7 +11,7 @@ const Product = ({productData, key} ) => {
     const navigation = useNavigation();
     return (
         <View style={[styles.productBox, {
-            marginLeft: key % 2 !== 0 ? cardGap : 0}]}>
+            marginLeft: key % 2 !== 0 ? 8 : 0, marginRight: 8}]}>
             <Image 
                 onPress={() => navigation.navigate('Product Details')}
                 style={styles.productImage}
@@ -25,8 +25,8 @@ const Product = ({productData, key} ) => {
             <Text style={styles.productRate} >
                 $ {productData.prize}
             </Text>
-            <Text h6 style={styles.productDescription}>
-                {productData.sortDescription}
+            <Text style={styles.productDescription} >
+                {productData.sortDescription.slice(0, 100)}...
             </Text>
             <Button variant='text' title="More" color='primary' onPress={() => navigation.navigate('Product Details')} />
         </View>
@@ -37,7 +37,7 @@ const styles=StyleSheet.create({
     productBox: {
         marginTop: cardGap,
         width: cardWidth,
-        height: 400,
+        height: 300,
         backgroundColor: 'white',
         borderRadius: 16,
         shadowOpacity: 0.2,
@@ -45,9 +45,9 @@ const styles=StyleSheet.create({
         alignItems: 'center',
     },
     productImage: {
-        width: 300,
-        height: 200,
-        margin: 2
+        width: 150,
+        height: 75,
+        margin: 2,
     },
     productTitle: {
         color: '#5a647d',
@@ -61,7 +61,7 @@ const styles=StyleSheet.create({
         marginBottom: 10
     },
     productDescription: {
-        fontSize: 15,
+        fontSize: 12,
         color: '#c1c4cd'
     },
 })
