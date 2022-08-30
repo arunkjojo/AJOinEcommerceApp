@@ -1,6 +1,7 @@
 # AJOinEcommerceApp
-![Uploading Screenshot 2022-08-25 at 7.08.51 PM.png…](Screenshot of Developning Stage)
-![Uploading Screenshot 2022-08-25 at 5.13.10 PM (2).png…](Developning Stage)
+
+![Screenshot 2022-08-25 at 7 08 51 PM](https://user-images.githubusercontent.com/42526032/187390026-b378f094-6bf9-4868-96af-645d1b2b2e83.png)
+![screenshot1](https://user-images.githubusercontent.com/42526032/187390067-65f7a677-0087-455f-937f-c72f6b686476.png)
 
 #Android App Link
 
