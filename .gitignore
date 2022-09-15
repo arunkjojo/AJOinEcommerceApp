@@ -8,8 +8,16 @@ npm-debug.*
 *.key
 *.mobileprovision
 *.orig.*
+
+# wp
 web-build/
-server/
+wp-admin/
+wp-content/
+wp-includes/
+logs/
+
+
+wordpress/
 
 # macOS
 .DS_Store
