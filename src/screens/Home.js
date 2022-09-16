@@ -53,9 +53,9 @@ const Home = () => {
   const [product, setProduct] = React.useState([]);
 
   const sliderImages = [
-    require("../assets/images/banner/banner2.png"),
     require("../assets/images/banner/banner1.png"),
-    require("../assets/images/banner/banner2.png"),
+    require("../assets/images/banner/banner1.png"),
+    require("../assets/images/banner/banner1.png"),
     // "https://vader-prod.s3.amazonaws.com/1543958419-810KAtkwn6L.jpg",
   ];
 

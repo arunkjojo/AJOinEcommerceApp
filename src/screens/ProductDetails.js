@@ -36,8 +36,27 @@ const ProductDetails = ({ route }) => {
       price: data.prize,
       image: data.image
     }
+    addToLocalStorage(product);
     dispatch(addToCart(product));
     navigation.navigate("Cart");
+  }
+
+  const addToLocalStorage = (product) => {
+    var cart = localStorage.getItem('cart');
+    if(cart.length > 0) {
+      const itemInCart = cart.find((item) => item.id === product.id);
+      if (itemInCart) {
+        itemInCart.quantity++;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+    }else{
+      let newCart = {
+        ...product,
+        quantity: 1
+      }
+      localStorage.setItem("cart", JSON.stringify(newCart))
+    }
   }
   return (
     <ScrollView style={styles.productBox}>
