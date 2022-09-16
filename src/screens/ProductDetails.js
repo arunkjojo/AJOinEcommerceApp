@@ -1,74 +1,123 @@
-import { ScrollView, Text, StyleSheet } from 'react-native'
-import React from 'react'
-import { Button, Stack } from '@react-native-material/core'
-import { useNavigation } from '@react-navigation/native';
-import Slider from '../components/Slider';
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+} from "react-native";
+import React from "react";
+import { Button, Stack } from "@react-native-material/core";
+import { useNavigation } from "@react-navigation/native";
+import { products } from "../database/DataBase";
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../redux/cartSlice';
 
-const ProductDetails = () => {
-    const navigation = useNavigation();
-    const slideImages= [
-        "https://vader-prod.s3.amazonaws.com/1543958419-810KAtkwn6L.jpg",
-        "https://vader-prod.s3.amazonaws.com/1543958419-810KAtkwn6L.jpg",
-        "https://vader-prod.s3.amazonaws.com/1543958419-810KAtkwn6L.jpg",
-        "https://vader-prod.s3.amazonaws.com/1543958419-810KAtkwn6L.jpg"
-    ];
-    
-    return (
-        <ScrollView style={styles.productBox}>
-            
-            <Slider sliderImage={slideImages} />
+const { width } = Dimensions.get("window");
+const ProductDetails = ({ route }) => {
 
-            <Text style={styles.productTitle}>
-                Product 1
-            </Text>
-            <Text style={styles.productRate}>
-                $ 200
-            </Text>
-            <Text h6 style={styles.productDescription}>
-                In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. It is also used to temporarily replace text in a process called greeking, which allows designers to consider the form of a webpage or publication, without the meaning of the text influencing the design. Lorem ipsum is typically a corrupted version of De finibus bonorum et malorum, a 1st-century BC text by the Roman statesman and philosopher Cicero, with words altered, added, and removed to make it nonsensical and improper Latin.
-            </Text>
+  const dispatch = useDispatch();
 
-            <Stack center style={styles.productButton}>
-                <Button
-                    color="primary" 
-                    title="Add Cart"
-                    onPress={() => navigation.navigate('Cart')}
-                />
-            </Stack>
-        </ScrollView>
-    )
-}
+  const { pId } = route.params;
+  const navigation = useNavigation();
+  const [productData, setProductData] = React.useState([{}]);
 
-const styles=StyleSheet.create({
-    productBox: {
-        margin: 4,
-        backgroundColor: '#fff',
-        height: '100%',
-        padding: 10,
-        flexDirection: 'column',
-        flex: 1,
-    },
-    productTitle: {
-        color: '#5a647d',
-        fontWeight: 'bold',
-        fontSize: 30,
-        marginBottom: 10, 
-        marginTop: 20
-    },
-    productRate: {
-        fontWeight: 'bold',
-        marginBottom: 10,
-        fontSize: 20
-    },
-    productDescription: {
-        fontSize: 18,
-        color: '#5a647d'
-    },
-    productButton: {
-        flex: 1,
-        paddingTop: 20,
-        paddingBottom: 40
+  React.useEffect(() => {
+    let data = products.filter((element) => {
+      return element.id === pId;
+    });
+    setProductData(data);
+  }, []);
+
+  const handleAddToCart = (data) => {
+    let product = {
+      id: data.id,
+      name: data.name,
+      price: data.prize,
+      image: data.image
     }
-})
+    addToLocalStorage(product);
+    dispatch(addToCart(product));
+    navigation.navigate("Cart");
+  }
 
-export default ProductDetails
+  const addToLocalStorage = (product) => {
+    var cart = localStorage.getItem('cart');
+    if(cart.length > 0) {
+      const itemInCart = cart.find((item) => item.id === product.id);
+      if (itemInCart) {
+        itemInCart.quantity++;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+    }else{
+      let newCart = {
+        ...product,
+        quantity: 1
+      }
+      localStorage.setItem("cart", JSON.stringify(newCart))
+    }
+  }
+  return (
+    <ScrollView style={styles.productBox}>
+      {productData.map((data, index) => (
+        <View key={index.toString()}>
+          <Image style={styles.productImage} source={data.image} />
+
+          <Text style={styles.productTitle}>{data.name}</Text>
+
+          <Text style={styles.productRate}>$ {data.prize}</Text>
+
+          <Text style={{ fontWeight: "bold" }}>Product Description</Text>
+          <Text style={styles.productDescription}>{data.description}</Text>
+          <Stack center style={styles.productButton}>
+            <Button
+              color="primary"
+              title="Add Cart"
+              onPress={() => handleAddToCart(data)}
+            />
+          </Stack>
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  productBox: {
+    margin: 4,
+    backgroundColor: "#fff",
+    height: "100%",
+    padding: 10,
+    flexDirection: "column",
+    flex: 1,
+  },
+  productImage: {
+    width: width - 30,
+    borderRadius: 30,
+  },
+  productTitle: {
+    color: "#000",
+    fontWeight: "bold",
+    fontSize: 25,
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  productRate: {
+    fontWeight: "normal",
+    marginBottom: 20,
+    fontSize: 19,
+    color: "#666",
+  },
+  productDescription: {
+    fontSize: 18,
+    color: "#666",
+  },
+  productButton: {
+    flex: 1,
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+});
+
+export default ProductDetails;
