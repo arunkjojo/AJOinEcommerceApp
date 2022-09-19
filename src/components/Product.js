@@ -9,12 +9,14 @@ const cardWidth = (width - cardGap * 3) / 2;
 
 const Product = ({ productData, index }) => {
   const navigation = useNavigation();
+
+  const imgUrl=productData?.images[0]?.src;
   return (
     <View
 
       onPress={() =>
         navigation.navigate("Product Details", {
-          pId: productData.id,
+          pId: productData?.id,
         })
       }
       
@@ -28,13 +30,13 @@ const Product = ({ productData, index }) => {
     >
       <TouchableOpacity  onPress={() =>
         navigation.navigate("Product Details", {
-          pId: productData.id,
+          pId: productData?.id,
         })
       }>
       <Image
         style={styles.productImage}
-        source={productData.image} //{ uri: productData.image }
-        alt={productData.name}
+        source={{ uri: imgUrl }} //{ uri: productData.image }
+        alt={productData?.name}
         resizeMode="cover"
       />
       </TouchableOpacity>
@@ -46,17 +48,17 @@ const Product = ({ productData, index }) => {
           })
         }
       >
-        {productData.name.slice(0, 18)}..
+        {productData?.name.slice(0, 18)}{(productData?.name).length>18?'...':''}
       </Text>
       <Text
         style={styles.productRate}
         onPress={() =>
           navigation.navigate("Product Details", {
-            pId: productData.id,
+            pId: productData?.id,
           })
         }
       >
-        IDR: {productData.prize}
+        $ {productData?.price}
       </Text>
     </View>
   );

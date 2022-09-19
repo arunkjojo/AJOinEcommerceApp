@@ -6,54 +6,59 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
 
 
 const viewConfigRef = { viewAreaCoveragePercentThreshold: 95 };
 
-const CategorySlider = ({ list }) => {
+const CategorySlider = ({ category, selectedItem }) => {
   const flatListRef = React.useRef();
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
-  const scrollToIndex = (index) => {
+
+  const scrollToIndex = (index, id) => {
     flatListRef.current?.scrollToIndex({ animated: true, index: index });
     setCurrentIndex(index);
-
+    console.log("cid",id);
+    selectedItem(id);
     // navigation.navigate("Product Details", {
     //   pId: productData.id,
     // })
+
   };
 
-  const renderItem = ({ item, index }) => (
-    <TouchableOpacity
-      style={[
-        styles.item,
-        {
-          backgroundColor: index == currentIndex ? "#000" : "#fff",
-        },
-      ]}
-      onPress={() => scrollToIndex(index)}
-      activeOpacity={1}
-    >
-      <Text
+  const renderItem = ({ item, index }) => { 
+    return (
+      <TouchableOpacity
         style={[
-          styles.text,
+          styles.item,
           {
-            color: index == currentIndex ? "#fff" : "#000",
+            backgroundColor: index == currentIndex ? "#000" : "#fff",
           },
         ]}
+        onPress={() => scrollToIndex(index, item.id)}
+        activeOpacity={1}
       >
-        {item.name}
-      </Text>
-    </TouchableOpacity>
-  );
+        <Text
+          style={[
+            styles.text,
+            {
+              color: index == currentIndex ? "#fff" : "#000",
+            },
+          ]}
+        >
+          {item.name}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <View style={styles.view}>
       <FlatList
-        data={list}
+        data={category}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         horizontal

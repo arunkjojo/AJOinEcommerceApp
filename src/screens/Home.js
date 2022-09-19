@@ -3,11 +3,16 @@ import React from "react";
 import Slider from "../components/Slider";
 import ProductList from "./ProductList";
 import CategorySlider from "../components/CategorySlider";
-import { products, categories } from "../database/DataBase";
+import { 
+  // products, 
+  // categories 
+} from "../database/DataBase";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "@expo/vector-icons/Feather";
 import { IconButton } from "@react-native-material/core";
 
+// import { WooCommerceConfig } from '../config/Constant'
+import WooCommerceAPI from 'react-native-woocommerce-api'
 
 function BottomNav() {
   const navigation = useNavigation();
@@ -49,27 +54,84 @@ function BottomNav() {
 }
 
 const Home = () => {
-  const [selectCategory, setSelectCategory] = React.useState("all");
+  const [categories, setCategories] = React.useState([]);
   const [product, setProduct] = React.useState([]);
 
+
   const sliderImages = [
+    require("../assets/images/banner/banner1.png"),
+    require("../assets/images/banner/banner1.png"),
     require("../assets/images/banner/banner1.png"),
     require("../assets/images/banner/banner1.png"),
     require("../assets/images/banner/banner1.png"),
     // "https://vader-prod.s3.amazonaws.com/1543958419-810KAtkwn6L.jpg",
   ];
 
+  
   React.useEffect(() => {
-    // if (selectCategory === "all") {
-    setProduct(products);
-    // } else {
-    //   let data = DataBase.products.filter((item) => {
-    //     return DataBase.categories.find((element) => {
-    //       return element.id === selectCategory;
-    //     });
-    //   });
-    // }
+    
+    // WooCommerceAPI configurations
+    const WooCommerceAPIs = new WooCommerceAPI({
+      url: 'https://123koin.com', // Your store URL
+      consumerKey: 'ck_e3277b1b5ea1fd74f0a3d65c5500894a15adf568', // Your consumer key
+      consumerSecret: 'cs_c9fe962981454ac13951e5fa111b8092a999a761', // Your consumer secret
+      version: 'wc/v3', // WooCommerce WP REST API version
+      wpAPI: true, // Enable the WP REST API integration
+      ssl: true,
+      queryStringAuth: true
+    });
+    
+    // get all product
+    WooCommerceAPIs.get("products")
+    .then((data) => {
+      // console.log(JSON.stringify(data));
+      setProduct(data)
+    })
+    .catch((error) => {
+      console.log(error.data.message);
+    });
+
+    // get all product/categories
+    WooCommerceAPIs.get("products/categories")
+    .then((data) => {
+      setCategories(data)
+    })
+    .catch((error) => {
+      console.log(error.data.message);
+    });
+    
   }, []);
+
+  const handleCategoryItem = (categoryId) => {
+
+    // WooCommerceAPI configurations
+    const WooCommerceAPIs = new WooCommerceAPI({
+      url: 'https://123koin.com', // Your store URL
+      consumerKey: 'ck_e3277b1b5ea1fd74f0a3d65c5500894a15adf568', // Your consumer key
+      consumerSecret: 'cs_c9fe962981454ac13951e5fa111b8092a999a761', // Your consumer secret
+      version: 'wc/v3', // WooCommerce WP REST API version
+      wpAPI: true, // Enable the WP REST API integration
+      ssl: true,
+      queryStringAuth: true
+    });
+    
+    // get all product
+    WooCommerceAPIs.get("products")
+    .then((data) => {
+      let newProduct = data?.filter((p) => {
+        return p?.categories?.find(c=>{
+          return c?.id===categoryId
+        })
+      }).map(data=>{
+        return data;
+      });
+
+      setProduct(newProduct);
+    })
+    .catch((error) => {
+      console.log(error.data.message);
+    });
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,8 +141,7 @@ const Home = () => {
             <Slider sliderImage={sliderImages} />
           </View>
           <View style={{ marginVertical: 20 }}>
-            {/* <Category categories={categories} /> */}
-            <CategorySlider list={categories} />
+            <CategorySlider selectedItem={(id)=>handleCategoryItem(id)} category={categories} />
             <View
               style={{
                 flex: 1,

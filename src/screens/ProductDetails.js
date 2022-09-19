@@ -9,9 +9,12 @@ import {
 import React from "react";
 import { Button, Stack } from "@react-native-material/core";
 import { useNavigation } from "@react-navigation/native";
-import { products } from "../database/DataBase";
+// import { products } from "../database/DataBase";
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
+
+
+import WooCommerceAPI from 'react-native-woocommerce-api'
 
 const { width } = Dimensions.get("window");
 const ProductDetails = ({ route }) => {
@@ -20,13 +23,32 @@ const ProductDetails = ({ route }) => {
 
   const { pId } = route.params;
   const navigation = useNavigation();
-  const [productData, setProductData] = React.useState([{}]);
+  const [productDetails, setProductDetails] = React.useState(null);
 
   React.useEffect(() => {
-    let data = products.filter((element) => {
-      return element.id === pId;
+    
+    // WooCommerceAPI configurations
+    const WooCommerceAPIs = new WooCommerceAPI({
+      url: 'https://123koin.com', // Your store URL
+      consumerKey: 'ck_e3277b1b5ea1fd74f0a3d65c5500894a15adf568', // Your consumer key
+      consumerSecret: 'cs_c9fe962981454ac13951e5fa111b8092a999a761', // Your consumer secret
+      version: 'wc/v3', // WooCommerce WP REST API version
+      wpAPI: true, // Enable the WP REST API integration
+      ssl: true,
+      queryStringAuth: true
     });
-    setProductData(data);
+    
+    // get all product
+    WooCommerceAPIs.get(`products/${pId}`)
+    .then((productDetails) => {
+      // console.log("productDetails",JSON.stringify(productDetails));
+      setProductDetails(productDetails);
+    })
+    .catch((error) => {
+      console.log(error.data.message);
+      setProductDetails(null);
+    });
+
   }, []);
 
   const handleAddToCart = (data) => {
@@ -42,7 +64,7 @@ const ProductDetails = ({ route }) => {
   }
 
   const addToLocalStorage = (product) => {
-    var cart = localStorage.getItem('cart');
+    var cart = JSON.parse(localStorage.getItem('cart') || '[]');
     if(cart.length > 0) {
       const itemInCart = cart.find((item) => item.id === product.id);
       if (itemInCart) {
@@ -58,18 +80,24 @@ const ProductDetails = ({ route }) => {
       localStorage.setItem("cart", JSON.stringify(newCart))
     }
   }
+
+  const imgUrl=productDetails?.images[0]?.src;
   return (
-    <ScrollView style={styles.productBox}>
-      {productData.map((data, index) => (
-        <View key={index.toString()}>
-          <Image style={styles.productImage} source={data.image} />
+    <>
+      {productDetails && (
+        
+        <ScrollView style={styles.productBox}>
+          <View key={productDetails?.slug}>
+            <Image style={styles.productImage} source={{ uri: imgUrl }} alt={productDetails?.name} />
 
-          <Text style={styles.productTitle}>{data.name}</Text>
+            <Text style={styles.productTitle}>{productDetails?.name}</Text>
 
-          <Text style={styles.productRate}>$ {data.prize}</Text>
+            <Text style={styles.productRate}>$ {productDetails?.regular_price}</Text>
 
-          <Text style={{ fontWeight: "bold" }}>Product Description</Text>
-          <Text style={styles.productDescription}>{data.description}</Text>
+            <Text style={{ fontWeight: "bold" }}>Product Description</Text>
+            <Text style={styles.productDescription}>{productDetails?.description}</Text>
+            
+          </View>
           <Stack center style={styles.productButton}>
             <Button
               color="primary"
@@ -77,9 +105,11 @@ const ProductDetails = ({ route }) => {
               onPress={() => handleAddToCart(data)}
             />
           </Stack>
-        </View>
-      ))}
-    </ScrollView>
+          
+        </ScrollView>
+      )}
+
+    </>
   );
 };
 
@@ -95,6 +125,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: width - 30,
     borderRadius: 30,
+    height: 200,
   },
   productTitle: {
     color: "#000",
@@ -117,6 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     paddingBottom: 40,
+
   },
 });
 

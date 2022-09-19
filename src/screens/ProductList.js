@@ -6,7 +6,7 @@ const ProductList = ({ products }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.row}>
-        {products.map((element, index) => (
+        {products?.map((element, index) => (
           <Product index={index} key={index.toString()} productData={element} />
         ))}
       </View>
