@@ -8,11 +8,12 @@ const {width} = Dimensions.get('screen');
 const CartItem = ({id, image, name, price, quantity=0}) => {
     
     const dispatch = useDispatch();
-    let totalPrice = (price.replace(/,/g, '') * quantity).toFixed(2);
+    var priceAmount= parseInt(price);
+    let totalPrice = (priceAmount * quantity);
     return (
         <View style={styles.container}>
             
-            <Image style={styles.images} source={require('../assets/images/products/p1.png')} />
+            <Image style={styles.images} source={{ uri: image}} />
             
             <View style={styles.content}>
 
@@ -31,11 +32,12 @@ const CartItem = ({id, image, name, price, quantity=0}) => {
 
                 <View style={styles.row}>
                     <Text  style={styles.qty}>Qty: {quantity}</Text>
+                    <Text  style={styles.qty}>Price: ₹{price}</Text>
                 </View>
 
                 <View style={styles.row}>
                     <View style={styles.prize}>
-                        <Text style={styles.prizeIcon}>$ </Text>
+                        <Text style={styles.prizeIcon}>₹ </Text>
                         <Text style={styles.prizeAmount}>{totalPrice}</Text>
                     </View>
                     <View style={styles.qtyAction}>

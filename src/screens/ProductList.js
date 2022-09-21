@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "center",
+    // justifyContent: 'space-around',
+    marginHorizontal:10,
   },
 });
 

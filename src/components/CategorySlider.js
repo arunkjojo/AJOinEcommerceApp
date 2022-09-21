@@ -21,7 +21,7 @@ const CategorySlider = ({ category, selectedItem }) => {
   const scrollToIndex = (index, id) => {
     flatListRef.current?.scrollToIndex({ animated: true, index: index });
     setCurrentIndex(index);
-    console.log("cid",id);
+    // console.log("cid",id);
     selectedItem(id);
     // navigation.navigate("Product Details", {
     //   pId: productData.id,

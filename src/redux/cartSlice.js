@@ -4,10 +4,10 @@ const initialState = {
   cart: [],
 };
 
-export const fetchCart = createAsyncThunk('cart/fetchCart', () => {
-  var localStorageCart = JSON.parse(localStorage.getItem('cart') || '[]');
-  return localStorageCart;
-})
+// export const fetchCart = createAsyncThunk('cart/fetchCart', () => {
+//   var localStorageCart = JSON.parse(localStorage.getItem('cart') || '[]');
+//   return localStorageCart;
+// })
 
 const cartSlice = createSlice({
   name: 'cart',
@@ -37,15 +37,18 @@ const cartSlice = createSlice({
       const removeItem = state.cart.filter((item) => item.id !== action.payload);
       state.cart = removeItem;
     },
+    removeAllItem: (state) => {
+      state.cart = [];
+    },
   },
-  extraReducers: builder => {
-    builder.addCase(fetchCart.fulfilled, (state, action) => {
-      state.cart = action.payload
-    })
-    builder.addCase(fetchCart.rejected, (state, action) => {
-      state.cart = []
-    })
-  }
+  // extraReducers: builder => {
+  //   builder.addCase(fetchCart.fulfilled, (state, action) => {
+  //     state.cart = action.payload
+  //   })
+  //   builder.addCase(fetchCart.rejected, (state, action) => {
+  //     state.cart = []
+  //   })
+  // }
 });
 export const cartReducer = cartSlice.reducer;
 export const {
@@ -53,4 +56,5 @@ export const {
   incrementQuantity,
   decrementQuantity,
   removeItem,
+  removeAllItem,
 } = cartSlice.actions;

@@ -3,16 +3,16 @@ import React from "react";
 import Slider from "../components/Slider";
 import ProductList from "./ProductList";
 import CategorySlider from "../components/CategorySlider";
-import { 
-  // products, 
-  // categories 
-} from "../database/DataBase";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "@expo/vector-icons/Feather";
 import { IconButton } from "@react-native-material/core";
 
-// import { WooCommerceConfig } from '../config/Constant'
-import WooCommerceAPI from 'react-native-woocommerce-api'
+import getAllProduct from "../api/getAPI/getAllProduct";
+import getCategory from "../api/getAPI/getCategory";
+import getFilterProduct from "../api/getAPI/getFilterProducts";
+
+// import { useSelector, useDispatch } from 'react-redux';
+// import { fetchCategory, fetchProduct } from '../redux/productSlice';
 
 function BottomNav() {
   const navigation = useNavigation();
@@ -54,82 +54,53 @@ function BottomNav() {
 }
 
 const Home = () => {
-  const [categories, setCategories] = React.useState([]);
-  const [product, setProduct] = React.useState([]);
+  // const dispatch = useDispatch();
 
+  // React.useEffect(() => { 
+  //   dispatch(fetchCategory());
+  //   dispatch(fetchProduct());  
+  // }, []);
+
+  // const {product, category} = useSelector(state => state.product);
+
+  
+  const [categories, setCategories] = React.useState([]);
+  const [products, setProducts] = React.useState([]);
+
+  // React.useEffect(() => {
+  //   setProducts(product);
+  // },[product]);
+
+  // React.useEffect(() => {
+  //   setCategories(category);
+  // },[category]);
 
   const sliderImages = [
     require("../assets/images/banner/banner1.png"),
     require("../assets/images/banner/banner1.png"),
     require("../assets/images/banner/banner1.png"),
+    require("../assets/images/banner/klo.png"),
     require("../assets/images/banner/banner1.png"),
     require("../assets/images/banner/banner1.png"),
+    require("../assets/images/banner/klo.png"),
     // "https://vader-prod.s3.amazonaws.com/1543958419-810KAtkwn6L.jpg",
   ];
-
   
   React.useEffect(() => {
-    
-    // WooCommerceAPI configurations
-    const WooCommerceAPIs = new WooCommerceAPI({
-      url: 'https://123koin.com', // Your store URL
-      consumerKey: 'ck_e3277b1b5ea1fd74f0a3d65c5500894a15adf568', // Your consumer key
-      consumerSecret: 'cs_c9fe962981454ac13951e5fa111b8092a999a761', // Your consumer secret
-      version: 'wc/v3', // WooCommerce WP REST API version
-      wpAPI: true, // Enable the WP REST API integration
-      ssl: true,
-      queryStringAuth: true
-    });
-    
-    // get all product
-    WooCommerceAPIs.get("products")
-    .then((data) => {
-      // console.log(JSON.stringify(data));
-      setProduct(data)
+    getAllProduct().then(res =>{
+      setProducts(res);
     })
-    .catch((error) => {
-      console.log(error.data.message);
-    });
+  },[getAllProduct]);
 
-    // get all product/categories
-    WooCommerceAPIs.get("products/categories")
-    .then((data) => {
-      setCategories(data)
-    })
-    .catch((error) => {
-      console.log(error.data.message);
+  React.useEffect(() => {
+    getCategory().then((res) => {
+      setCategories(res);
     });
-    
-  }, []);
+  },[getCategory]);
 
   const handleCategoryItem = (categoryId) => {
-
-    // WooCommerceAPI configurations
-    const WooCommerceAPIs = new WooCommerceAPI({
-      url: 'https://123koin.com', // Your store URL
-      consumerKey: 'ck_e3277b1b5ea1fd74f0a3d65c5500894a15adf568', // Your consumer key
-      consumerSecret: 'cs_c9fe962981454ac13951e5fa111b8092a999a761', // Your consumer secret
-      version: 'wc/v3', // WooCommerce WP REST API version
-      wpAPI: true, // Enable the WP REST API integration
-      ssl: true,
-      queryStringAuth: true
-    });
-    
-    // get all product
-    WooCommerceAPIs.get("products")
-    .then((data) => {
-      let newProduct = data?.filter((p) => {
-        return p?.categories?.find(c=>{
-          return c?.id===categoryId
-        })
-      }).map(data=>{
-        return data;
-      });
-
-      setProduct(newProduct);
-    })
-    .catch((error) => {
-      console.log(error.data.message);
+    getFilterProduct(categoryId).then(res=>{
+      setProducts(res);
     });
   }
 
@@ -138,7 +109,7 @@ const Home = () => {
       <View style={styles.container}>
         <ScrollView>
           <View>
-            <Slider sliderImage={sliderImages} />
+            <Slider sliderImages={sliderImages} />
           </View>
           <View style={{ marginVertical: 20 }}>
             <CategorySlider selectedItem={(id)=>handleCategoryItem(id)} category={categories} />
@@ -161,7 +132,7 @@ const Home = () => {
               </Text>
               <Text style={{ marginHorizontal: 20 }}>See All</Text>
             </View>
-            <ProductList products={product} />
+            <ProductList products={products} />
           </View>
         </ScrollView>
       </View>

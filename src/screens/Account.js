@@ -1,13 +1,20 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
 
 const Account = () => {
+  const [user, setUser]=React.useState(null);
+  React.useEffect(()=>{
+    WooCommerce.get("customers/25")
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  },[])
   return (
     <View>
-      <Text>Account</Text>
-      <Image 
-      style={{width: 100}}
-      source={{uri: 'https://reactnative.dev/img/tiny_logo.png'}} />
+      
     </View>
   )
 }

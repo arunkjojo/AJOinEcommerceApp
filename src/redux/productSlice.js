@@ -1,37 +1,66 @@
-import axios from 'axios'
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import getCategory from '../api/getAPI/getCategory';
+import getAllProduct from '../api/getAPI/getAllProduct';
 
 const initialState = {
-  loading: false,
   product: [],
-  error: ''
-}
+  category:[],
+};
 
-// Generates pending, fulfilled and rejected action types
-export const fetchProduct = createAsyncThunk('product/fetchProduct', () => {
-  return axios
-    .get('https://123koin.com/wp-json/wc/v3/products?consumer_key=ck_e3277b1b5ea1fd74f0a3d65c5500894a15adf568&cunsumer_secret=cs_c9fe962981454ac13951e5fa111b8092a999a761')
-    .then(response => response.data)
-})
+export const fetchProduct = createAsyncThunk(
+  'product/fetchProduct', 
+  () => {
+    return getAllProduct()
+    .then (
+      (res) => {
+        // console.log("res",res)
+        return res;
+      }
+    )
+  }
+)
+
+export const fetchCategory = createAsyncThunk(
+  'product/fetchCategory', 
+  () => {
+    return getCategory()
+    .then (
+      (res) => {
+        // console.log("res",res)
+        return res;
+      }
+    )
+  }
+)
 
 const productSlice = createSlice({
   name: 'product',
   initialState,
-  extraReducers: builder => {
-    builder.addCase(fetchProduct.pending, state => {
-      state.loading = true
-    })
-    builder.addCase(fetchProduct.fulfilled, (state, action) => {
-      state.loading = false
-      state.product = action.payload
-      state.error = ''
-    })
-    builder.addCase(fetchProduct.rejected, (state, action) => {
-      state.loading = false
-      state.product = []
-      state.error = action.error.message
-    })
+  reducers: {},
+  extraReducers: {
+    [fetchProduct.pending]: (state) => {
+      state.product = [];
+    },
+    [fetchProduct.fulfilled]: (state, action) => {
+      // console.log("pay",action.payload);
+      state.product = action.payload;
+    },
+    [fetchProduct.rejected]: (state) => {
+      state.product = [];
+    },
+
+    [fetchCategory.pending]: (state) => {
+      state.category = [];
+    },
+    [fetchCategory.fulfilled]: (state, action) => {
+      // console.log("pay",action.payload);
+      state.category = action.payload;
+    },
+    [fetchCategory.rejected]: (state) => {
+      state.category = [];
+    }
   }
-})
+});
+export const {} = productSlice.actions;
 
 export const productReducer = productSlice.reducer;

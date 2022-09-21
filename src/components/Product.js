@@ -58,7 +58,7 @@ const Product = ({ productData, index }) => {
           })
         }
       >
-        $ {productData?.price}
+        ₹ {productData?.price}
       </Text>
     </View>
   );

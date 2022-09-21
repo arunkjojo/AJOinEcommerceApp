@@ -11,9 +11,27 @@ import React from "react";
 const { width } = Dimensions.get("window");
 const viewConfigRef = { viewAreaCoveragePercentThreshold: 95 };
 
-const Slider = ({ sliderImage }) => {
+const Slider = ({ sliderImages }) => {
   const flatListRef = React.useRef();
-  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [currentIndex, setCurrentIndex] = React.useState(-1);
+  const maxImg=sliderImages?.length || 0;
+
+  const delay = 1;
+  React.useEffect(
+    () => {
+      let timer = setInterval(() =>{
+        let scrollIndexValue = currentIndex<(maxImg-1)?currentIndex:-1;
+        scrollIndexValue++;
+        scrollToIndex(scrollIndexValue);
+        setCurrentIndex(scrollIndexValue)
+      },delay*1000)
+
+      return () => {
+        clearInterval(timer);
+      }
+    },
+    [currentIndex]
+  );
 
   const onViewRef = React.useRef(({ changed }) => {
     if (changed[0].isViewable) {
@@ -22,6 +40,7 @@ const Slider = ({ sliderImage }) => {
   });
 
   const scrollToIndex = (index) => {
+    // console.log(index, flatListRef.current)
     flatListRef.current?.scrollToIndex({ animated: true, index: index });
   };
 
@@ -33,7 +52,7 @@ const Slider = ({ sliderImage }) => {
       >
         <Image
           source={item} // { uri: item }
-          style={styles.sliderImage}
+          style={styles.sliderImages}
         />
       </TouchableOpacity>
     );
@@ -41,7 +60,7 @@ const Slider = ({ sliderImage }) => {
   return (
     <View style={styles.sliderView}>
       <FlatList
-        data={sliderImage}
+        data={sliderImages}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         horizontal
@@ -56,13 +75,13 @@ const Slider = ({ sliderImage }) => {
       />
 
       <View style={styles.dotView}>
-        {sliderImage.map(({}, index) => (
+        {sliderImages.map(({}, index) => (
           <TouchableOpacity
             key={index.toString()}
             style={[
               styles.circle,
               {
-                backgroundColor: index == currentIndex ? "#4a06c9" : "#adadad",
+                backgroundColor: index == currentIndex ? "#fff" : "#666",
               },
             ]}
             onPress={() => scrollToIndex(index)}
@@ -81,7 +100,7 @@ const styles = StyleSheet.create({
   slider: {
     maxHeight: 255,
   },
-  sliderImage: {
+  sliderImages: {
     width: width - 20,
     height: 200,
     resizeMode: "cover",
@@ -96,7 +115,7 @@ const styles = StyleSheet.create({
   circle: {
     width: 10,
     height: 10,
-    backgroundColor: "#5a647d",
+    backgroundColor: "#666",
     borderRadius: 50,
     marginHorizontal: 5,
   },

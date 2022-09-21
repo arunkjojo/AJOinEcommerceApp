@@ -9,12 +9,13 @@ import {
 import React from "react";
 import { Button, Stack } from "@react-native-material/core";
 import { useNavigation } from "@react-navigation/native";
-// import { products } from "../database/DataBase";
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
 
+import HtmlContent from "../components/HtmlContent";
+import getAllProduct from "../api/getAPI/getAllProduct";
 
-import WooCommerceAPI from 'react-native-woocommerce-api'
+
 
 const { width } = Dimensions.get("window");
 const ProductDetails = ({ route }) => {
@@ -26,60 +27,41 @@ const ProductDetails = ({ route }) => {
   const [productDetails, setProductDetails] = React.useState(null);
 
   React.useEffect(() => {
-    
-    // WooCommerceAPI configurations
-    const WooCommerceAPIs = new WooCommerceAPI({
-      url: 'https://123koin.com', // Your store URL
-      consumerKey: 'ck_e3277b1b5ea1fd74f0a3d65c5500894a15adf568', // Your consumer key
-      consumerSecret: 'cs_c9fe962981454ac13951e5fa111b8092a999a761', // Your consumer secret
-      version: 'wc/v3', // WooCommerce WP REST API version
-      wpAPI: true, // Enable the WP REST API integration
-      ssl: true,
-      queryStringAuth: true
-    });
-    
-    // get all product
-    WooCommerceAPIs.get(`products/${pId}`)
-    .then((productDetails) => {
-      // console.log("productDetails",JSON.stringify(productDetails));
-      setProductDetails(productDetails);
+    getAllProduct(pId).then(res =>{
+      setProductDetails(res);
     })
-    .catch((error) => {
-      console.log(error.data.message);
-      setProductDetails(null);
-    });
-
-  }, []);
+  },[getAllProduct]);
 
   const handleAddToCart = (data) => {
     let product = {
       id: data.id,
       name: data.name,
-      price: data.prize,
-      image: data.image
+      price: data.regular_price,
+      image: data.images[0].src
     }
-    addToLocalStorage(product);
+    // addToLocalStorage(product);
     dispatch(addToCart(product));
     navigation.navigate("Cart");
   }
 
-  const addToLocalStorage = (product) => {
-    var cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    if(cart.length > 0) {
-      const itemInCart = cart.find((item) => item.id === product.id);
-      if (itemInCart) {
-        itemInCart.quantity++;
-      } else {
-        cart.push({ ...product, quantity: 1 });
-      }
-    }else{
-      let newCart = {
-        ...product,
-        quantity: 1
-      }
-      localStorage.setItem("cart", JSON.stringify(newCart))
-    }
-  }
+  // const addToLocalStorage = (product) => {
+  //   var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  //   if(cart.length > 0) {
+  //     const itemInCart = cart.find((item) => item.id === product.id);
+  //     if (itemInCart) {
+  //       itemInCart.quantity++;
+  //     } else {
+  //       cart.push({ ...product, quantity: 1 });
+  //     }
+  //   }else{
+  //     let newCart = {
+  //       ...product,
+  //       quantity: 1
+  //     }
+  //     localStorage.setItem("cart", JSON.stringify(newCart))
+  //   }
+  // }
+
 
   const imgUrl=productDetails?.images[0]?.src;
   return (
@@ -91,18 +73,26 @@ const ProductDetails = ({ route }) => {
             <Image style={styles.productImage} source={{ uri: imgUrl }} alt={productDetails?.name} />
 
             <Text style={styles.productTitle}>{productDetails?.name}</Text>
+            <View style={styles.productRate}>
+              {productDetails.sale_price!=''? (
+                <Text style={styles.productOldRate}>₹ {productDetails?.regular_price}</Text>
+              ):null}
 
-            <Text style={styles.productRate}>$ {productDetails?.regular_price}</Text>
-
+              <Text style={styles.productNewRate}>₹ {productDetails?.price}</Text>
+            </View>
             <Text style={{ fontWeight: "bold" }}>Product Description</Text>
-            <Text style={styles.productDescription}>{productDetails?.description}</Text>
+            {/* <Text style={styles.productDescription}>
+              {productDetails?.short_description}
+            </Text> */}
+            <HtmlContent style={styles.productDescription} data={productDetails?.description}/>
             
+              
           </View>
           <Stack center style={styles.productButton}>
             <Button
               color="primary"
               title="Add Cart"
-              onPress={() => handleAddToCart(data)}
+              onPress={() => handleAddToCart(productDetails)}
             />
           </Stack>
           
@@ -135,10 +125,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   productRate: {
-    fontWeight: "normal",
+    fontWeight: "bold",
+    flexDirection: 'row',
+    justifyContent:'space-around',   
     marginBottom: 20,
-    fontSize: 19,
+  },
+  productNewRate: {
+    fontWeight: "bold",
+    fontSize: 20,
     color: "#666",
+  },
+  productOldRate: {
+    color: 'red',
+    fontSize: 20,
+    textDecorationLine: 'line-through', 
+    textDecorationStyle: 'solid'
   },
   productDescription: {
     fontSize: 18,

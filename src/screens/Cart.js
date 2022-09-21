@@ -15,17 +15,12 @@ const Cart = () => {
     cart.forEach(item => {
       totalQuantity += item.quantity
       let price=(item.price);
-      totalPrice += price.replace(/,/g, '') * item.quantity
+      totalPrice += price * item.quantity
     })
     return {totalPrice, totalQuantity}
   }
-  React.useEffect(()=>{
-    if(!cart.length>0){
-      navigation.navigate("Home")
-    }
-  },[cart]);
 
-  const delivaryFee=getTotal().totalPrice>0?getTotal().totalPrice<100000?1000:0:0;
+  const delivaryFee=getTotal().totalPrice>0?getTotal().totalPrice<=1999?100:0:0;
   return (
       <ScrollView style={styles.container}>
         <ScrollView style={{alignSelf:'flex-start'}}>
@@ -45,28 +40,28 @@ const Cart = () => {
           <View style={styles.rowItem}>
             <Text style={styles.label}>SubtotalItems({getTotal().totalQuantity}) </Text>
             <View style={styles.rowItem}>
-              <Text style={styles.small}>$ </Text>
-              <Text style={styles.value}>{(getTotal().totalPrice).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}</Text>
+              <Text style={styles.small}>₹ </Text>
+              <Text style={styles.value}>{(getTotal().totalPrice).toFixed(2)}</Text>
             </View>
           </View>
 
           <View style={styles.rowItem}>
             <Text style={styles.label}>Delivary Fee </Text>
             <View style={styles.rowItem}>
-              <Text style={styles.small}>$ </Text>
-              <Text style={styles.value}>{(delivaryFee).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}</Text>
+              <Text style={styles.small}>₹ </Text>
+              <Text style={styles.value}>{(delivaryFee).toFixed(2)}</Text>
             </View>
           </View>
           <View style={styles.seperator}></View>
           <View style={styles.rowItem}>
             <Text style={styles.label}>Total </Text>
             <View style={styles.rowItem}>
-              <Text style={[styles.small, {fontSize:20}]}>$ </Text>
-              <Text style={[styles.value,  {fontSize:20}]}>{(getTotal().totalPrice + delivaryFee).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}</Text>
+              <Text style={[styles.small, {fontSize:20}]}>₹ </Text>
+              <Text style={[styles.value,  {fontSize:20}]}>{(getTotal().totalPrice + delivaryFee).toFixed(2)}</Text>
             </View>
           </View>
           <View style={styles.rowItem}>
-            <TouchableOpacity style={styles.payButton} onPress={() => navigation.navigate("Home")}>
+            <TouchableOpacity style={styles.payButton} onPress={() => navigation.navigate("Checkout")}>
               <Text style={styles.payText}>
                 Go to Payment
               </Text>
