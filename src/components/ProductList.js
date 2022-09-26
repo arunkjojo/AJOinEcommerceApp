@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import Product from "../components/Product";
+import Product from "./Product";
 
 const ProductList = ({ products }) => {
   return (

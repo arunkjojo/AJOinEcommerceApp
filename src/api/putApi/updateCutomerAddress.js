@@ -1,15 +1,13 @@
 import WooCommerceApi from '../WooCommerceConfigure'
 
-export default function getCategory(){
+export default function updateCustomerAddress(id,data){
     
-    return WooCommerceApi.get("products/categories")
+    return WooCommerceApi.put(`customers/${id}`,data)
         .then((res) => {
-            // console.log("res",res)
             return res;
         })
         .catch((error) => {
-            // console.log("error",error)
             return [];
         });
     
-}
+} 

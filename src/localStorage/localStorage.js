@@ -1,57 +1,65 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const storeObjectData = async (storage_Key, value) => {
-    try {
-        const jsonValue = JSON.stringify(value)
-        await AsyncStorage.setItem(`${storage_Key}`, jsonValue)
-    } catch (e) {
-        // saving error
-    }
-}
+export const storeObjectData = (storage_Key, value) => {
+  try {
+    const jsonValue = JSON.stringify(value);
+    AsyncStorage.setItem(`${storage_Key}`, jsonValue);
+  } catch (e) {
+    // saving error
+  }
+};
 
-export const storeSingleData = async (storage_Key, value) => {
-    try {
-      await AsyncStorage.setItem(`${storage_Key}`, value)
-    } catch (e) {
-      // saving error
-    }
-}
+export const storeSingleData = (storage_Key, value) => {
+  try {
+    AsyncStorage.setItem(`${storage_Key}`, value);
+  } catch (e) {
+    // saving error
+  }
+};
 
-export const getObjectData = async (storage_Key) => {
-    try {
-        const jsonValue = await AsyncStorage.getItem(`${storage_Key}`)
-        return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch(e) {
-        // error reading value
-    }
-}
+export const getObjectData = (storage_Key) => {
+  try {
+    const jsonValue = AsyncStorage.getItem(`${storage_Key}`);
+    return jsonValue != null ? JSON.parse(jsonValue) : {};
+  } catch (e) {
+    // error reading value
+  }
+};
 
-export const getSingleData = async (storage_Key) => {
-    try {
-      const value = await AsyncStorage.getItem(`${storage_Key}`)
-      if(value !== null) {
-        // value previously stored
-        return value;
-      }
-    } catch(e) {
-      // error reading value
-    }
-}
-
-export const getMultiData = async (storage_Key_array) => {
-    let values
-    try {
-      value = await AsyncStorage.getImultiGettem(storage_Key_array)
+export const getSingleData = (storage_Key) => {
+  try {
+    const value = AsyncStorage.getItem(`${storage_Key}`);
+    if (value !== null) {
+      // value previously stored
       return value;
-    } catch(e) {
-      // error reading value
+    } else {
+      return "";
     }
-}
+  } catch (e) {
+    // error reading value
+  }
+};
 
-export const removeSingleData = async (storage_Key) => {
-    try {
-      await AsyncStorage.removeItem(`${storage_Key}`)
-    } catch(e) {
-      // error reading value
-    }
-}
+export const getMultipleData = (storage_Key_array) => {
+  let values;
+  try {
+    values = AsyncStorage.getMultiData(storage_Key_array);
+    return values;
+  } catch (e) {
+    // error reading value
+  }
+};
+
+export const removeSingleData = (storage_Key) => {
+  try {
+    AsyncStorage.removeItem(`${storage_Key}`);
+  } catch (e) {
+    // error reading value
+  }
+};
+
+export const clearAsyncStorage = () => {
+  AsyncStorage.getAllKeys()
+    .then((keys) => AsyncStorage.multiRemove(keys))
+    .then(() => alert("success"));
+};

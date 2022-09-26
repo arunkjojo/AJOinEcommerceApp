@@ -1,14 +1,12 @@
 import WooCommerceApi from '../WooCommerceConfigure'
 
-export default function getCategory(){
+export default function createOrder(order){
     
-    return WooCommerceApi.get("products/categories")
+    return WooCommerceApi.post(`orders`,order)
         .then((res) => {
-            // console.log("res",res)
             return res;
         })
         .catch((error) => {
-            // console.log("error",error)
             return [];
         });
     

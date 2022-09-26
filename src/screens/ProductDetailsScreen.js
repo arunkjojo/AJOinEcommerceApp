@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
 
 import HtmlContent from "../components/HtmlContent";
-import getAllProduct from "../api/getAPI/getAllProduct";
+import getProduct from "../api/getApi/getProduct";
 
 
 
@@ -27,16 +27,16 @@ const ProductDetails = ({ route }) => {
   const [productDetails, setProductDetails] = React.useState(null);
 
   React.useEffect(() => {
-    getAllProduct(pId).then(res =>{
+    getProduct(pId).then(res =>{
       setProductDetails(res);
     })
-  },[getAllProduct]);
+  },[getProduct]);
 
   const handleAddToCart = (data) => {
     let product = {
       id: data.id,
       name: data.name,
-      price: data.regular_price,
+      price: data.price,
       image: data.images[0].src
     }
     // addToLocalStorage(product);

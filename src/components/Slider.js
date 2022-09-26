@@ -16,7 +16,7 @@ const Slider = ({ sliderImages }) => {
   const [currentIndex, setCurrentIndex] = React.useState(-1);
   const maxImg=sliderImages?.length || 0;
 
-  const delay = 1;
+  const delay = 2;
   React.useEffect(
     () => {
       let timer = setInterval(() =>{
