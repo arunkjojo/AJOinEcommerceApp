@@ -14,6 +14,7 @@ const Account = () => {
     AsyncStorageHelper.getSingleData("customerId", setCustomerId);
   };
   React.useEffect(() => {
+    // AsyncStorageHelper.storeSingleData("customerId", customerId.toString());
     AsyncStorageHelper.getSingleData("customerId", setCustomerId);
   }, []);
   React.useEffect(() => {
